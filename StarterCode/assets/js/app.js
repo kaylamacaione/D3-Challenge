@@ -3,10 +3,10 @@ var svgWidth = 900;
 var svgHeight = 1000;
 
 var margin = {
-    top: 50,
+    top: 100,
     bottom: 50,
     right: 50,
-    left: 50
+    left: 200
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -24,8 +24,19 @@ var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 //initial params
-// var chosenXaxis = "obesity";
-// var chosenYaxis = "income";
+var chosenXaxis = "obesity";
+
+
+//create X scale function
+function xScale(stateData, chosenXaxis) {
+  var xLinearScale = d3.scaleLinear()
+      .domain([d3.min(stateData, data => data[chosenXaxis]),
+        d3.max(stateData, data => data[chosenXaxis])
+      ])
+      .range([0, width]);
+      
+      return xLinearScale;
+  }
 
 //import data
 d3.csv("assets/js/data.csv").then(function(stateData) {
@@ -39,10 +50,8 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
       });
 
     //create scale functions
-    var xLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(stateData, data => data.obesity)])
-        .range([0, width]);
-        
+    var xLinearScale = xScale(stateData, chosenXaxis);
+
     var yLinearScale = d3.scaleLinear()
         .domain([0, d3.max(stateData, data => data.income)])
         .range([height, 0]);
@@ -54,13 +63,12 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     //append axes to chart group
     chartGroup
       .append('g')
-      .classed('green', true)
-      .attr("transform", `translate(${width}, 0)`)
+      .classed('x-axis', true)
+      .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
 
     chartGroup
       .append('g')
-      .attr("transform", `translate(0, ${height})`)
       .call(leftAxis);
 
 
@@ -69,7 +77,7 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     .data(stateData)
     .enter()
     .append("circle")
-    .attr("cx", data => xLinearScale(data.obesity))
+    .attr("cx", data => xLinearScale(data[chosenXaxis]))
     .attr("cy", data => yLinearScale(data.income))
     .attr("r", "15")
     .attr("fill", "green")
@@ -80,7 +88,7 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     .data(stateData)
     .enter()
     .append("text")
-    .attr("x", data => xLinearScale(data.obesity))
+    .attr("x", data => xLinearScale(data[chosenXaxis]))
     .attr("y", data => yLinearScale(data.income))
     .classed("stateText", true)
     .text(data => data.abbr)
@@ -123,8 +131,10 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     chartGroup.append("text")
         .attr("transform", `translate(${width / 2}, ${height + margin.top})`)
         .attr("text-anchor", "middle")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
         .attr("font-size", "16px")
+        .classed("axis-text", true)
         .text("Average Income ($)");
 });
-
-
