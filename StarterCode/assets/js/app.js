@@ -1,5 +1,5 @@
 // define variables and margins
-var svgWidth = 1000;
+var svgWidth = 900;
 var svgHeight = 1000;
 
 var margin = {
@@ -13,7 +13,7 @@ var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
 
-//create SVG wrapper
+//create SVG wrapper and append
 var svg = d3
   .select("body")
   .append("svg")
@@ -23,6 +23,9 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+//initial params
+// var chosenXaxis = "obesity";
+// var chosenYaxis = "income";
 
 //import data
 d3.csv("assets/js/data.csv").then(function(stateData) {
@@ -32,7 +35,7 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     stateData.forEach(function(data) {
         data.obesity = +data.obesity;
         data.income = +data.income;
-        data.abbr = +data.abbr;
+        data.abbr = data.abbr;
       });
 
     //create scale functions
@@ -68,7 +71,7 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     .append("circle")
     .attr("cx", data => xLinearScale(data.obesity))
     .attr("cy", data => yLinearScale(data.income))
-    .attr("r", "12")
+    .attr("r", "15")
     .attr("fill", "green")
     .attr("opacity", .5);
 
@@ -78,7 +81,7 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     .enter()
     .append("text")
     .attr("x", data => xLinearScale(data.obesity))
-    .attr("y", data => yLinearScale(data.income-0.28))
+    .attr("y", data => yLinearScale(data.income))
     .classed("stateText", true)
     .text(data => data.abbr)
     .on("mouseover", function(data) {
@@ -115,15 +118,13 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
         .attr("transform", `translate(${width / 2}, ${height + margin.top})`)
         .attr("text-anchor", "middle")
         .attr("font-size", "16px")
-        .attr("data-axis-name", "Obesity (%)")
         .text("Obesity (%)");
 
     chartGroup.append("text")
         .attr("transform", `translate(${width / 2}, ${height + margin.top})`)
         .attr("text-anchor", "middle")
         .attr("font-size", "16px")
-        .attr("data-axis-name", "Average Income ($)")
-        .text("Income");
+        .text("Average Income ($)");
 });
 
 
