@@ -1,10 +1,10 @@
 // define variables and margins
-var svgWidth = 900;
+var svgWidth = 1000;
 var svgHeight = 1000;
 
 var margin = {
     top: 100,
-    bottom: 50,
+    bottom: 100,
     right: 50,
     left: 200
 };
@@ -99,6 +99,26 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
         toolTip.hide(data);
     });
 
+    //create axis labels
+    chartGroup.append("text")
+    .attr("x",(width/3))
+    .attr("y", height + 40)
+    .attr("dy", "1em")
+    .attr("font-weight", 700)
+    .style("text-anchor", "middle")
+    .classed("axis-text", true)
+    .text("Obesity (%)");
+
+    chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .attr("font-weight", 700)
+    .style("text-anchor", "middle")
+    .classed("axis-text", true)
+    .text("Average Income ($)");
+
     //initialize tool tip
     var toolTip = d3.tip()
         .attr("class", "tooltip")
@@ -121,20 +141,4 @@ d3.csv("assets/js/data.csv").then(function(stateData) {
     }).catch(function(error) {
       console.log(error);
 
-    //create axis labels
-    chartGroup.append("text")
-        .attr("transform", `translate(${width / 2}, ${height + margin.top})`)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "16px")
-        .text("Obesity (%)");
-
-    chartGroup.append("text")
-        .attr("transform", `translate(${width / 2}, ${height + margin.top})`)
-        .attr("text-anchor", "middle")
-        .attr("y", 0 - margin.left)
-        .attr("x", 0 - (height / 2))
-        .attr("dy", "1em")
-        .attr("font-size", "16px")
-        .classed("axis-text", true)
-        .text("Average Income ($)");
 });
